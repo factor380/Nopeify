@@ -3,8 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { SongItemProps } from '../types/types';
 
 
-
-export default function SongItem({ title, artist }: SongItemProps) {
+function SongItem({ title, artist }: SongItemProps) {
   return (
     <View style={styles.songItem}>
       <Text style={styles.songTitle}>{title}</Text>
@@ -12,6 +11,8 @@ export default function SongItem({ title, artist }: SongItemProps) {
     </View>
   );
 }
+
+export default React.memo(SongItem);
 
 const styles = StyleSheet.create({
   songItem: {

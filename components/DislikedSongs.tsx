@@ -8,13 +8,25 @@ export default function DislikedSongs() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const dislikedSongs = dislikedSongsService.getAll();
-    setSongs(dislikedSongs.map(song => ({
-      id: song.id,
-      name: song.title,
-      artists: [{ name: song.artist }],
-    })));
+    setLoading(true);
+    const unsubscribe = dislikedSongsService.subscribe(dislikedSongs => {
+      setSongs(dislikedSongs.map(song => ({
+        id: song.id,
+        name: song.title,
+        artists: [{ name: song.artist }],
+      })));
+      setLoading(false);
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
+
+  const handleDelete = (id: string) => {
+    dislikedSongsService.remove(id);
+    setSongs(prev => prev.filter(s => s.id !== id));
+  };
 
   return (
     <View style={styles.container}>
@@ -22,6 +34,7 @@ export default function DislikedSongs() {
       <TrackList 
         tracks={songs} 
         loading={loading}
+        onDelete={handleDelete}
       />
     </View>
   );

@@ -13,6 +13,7 @@ class DislikedSongsService {
             artist: 'Rebecca Black'
         }
     };
+    private subscribers: Set<(songs: DislikedSong[]) => void> = new Set();
 
     getAll(): DislikedSong[] {
         return Object.values(this.dislikedSongs);
@@ -21,16 +22,33 @@ class DislikedSongsService {
     getById(id: string): DislikedSong | undefined {
         return this.dislikedSongs[id];
     }
-    isDisliked(id: string): boolean { 
-        return id in this.dislikedSongs;
-    }
 
     add(song: DislikedSong): void {
         this.dislikedSongs[song.id] = song;
+        this.notify();
     }
 
     remove(id: string): void {
         delete this.dislikedSongs[id];
+        this.notify();
+    }
+
+    isDisliked(id: string): boolean { 
+        return id in this.dislikedSongs;
+    }
+
+    subscribe(cb: (songs: DislikedSong[]) => void): () => void {
+        this.subscribers.add(cb);
+        // immediately call with current list
+        cb(this.getAll());
+        return () => this.subscribers.delete(cb);
+    }
+
+    private notify() {
+        const all = this.getAll();
+        this.subscribers.forEach(cb => {
+            try { cb(all); } catch (e) { console.error('Subscriber error', e); }
+        });
     }
 }
 

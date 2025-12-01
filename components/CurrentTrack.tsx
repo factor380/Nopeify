@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, ActivityIndicator, Image, StyleSheet } from 'react-native';
+import { View, Text, ActivityIndicator, Image, StyleSheet, Button, Alert } from 'react-native';
 import spotifyService from '../services/spotifyService';
 import dislikedSongsService from '../services/dislikedSongsService';
 
@@ -18,11 +18,11 @@ export default function CurrentTrack() {
                 const response = await spotifyService.getCurrentPlayback();
                 const newTrack = response?.item || null;
                 const newId = newTrack?.id || null;
-                console.log('Polled current track:', newId ,newTrack.name );
+                console.log('Polled current track:', newId, newTrack.name);
                 if (mounted && newId !== lastTrackIdRef.current) {
                     if (dislikedSongsService.isDisliked(newId)) {
-                    console.log('Current track is disliked, skipping to next track:', newId);
-                    spotifyService.nextTrack();
+                        console.log('Current track is disliked, skipping to next track:', newId);
+                        spotifyService.nextTrack();
                     }
                     setTrack(newTrack);
                     lastTrackIdRef.current = newId;
@@ -66,6 +66,32 @@ export default function CurrentTrack() {
             <View style={styles.info}>
                 <Text style={styles.title}>{track.name}</Text>
                 <Text style={styles.artist}>{track.artists?.map((a: any) => a.name).join(', ')}</Text>
+                <View style={{ marginTop: 8 }}>
+                    <Button
+                        title="הוסף ל'לא אהבתי'"
+                        color="#e22134"
+                        onPress={() => {
+                            const id = track?.id;
+                            if (!id) return;
+                            if (dislikedSongsService.isDisliked(id)) {
+                                Alert.alert('שגיאה', 'השיר כבר ברשימת ה"לא אהבתי"');
+                                return;
+                            }
+                            try {
+                                dislikedSongsService.add({
+                                    id,
+                                    title: track.name,
+                                    artist: track.artists?.[0]?.name || 'Unknown',
+                                });
+                                spotifyService.nextTrack();
+                                Alert.alert('בוצע', 'השיר הוסף לרשימת ה"לא אהבתי" - עוברים לשיר הבא');
+                            } catch (e) {
+                                console.error('Error adding to disliked:', e);
+                                Alert.alert('שגיאה', 'לא ניתן להוסיף את השיר כעת');
+                            }
+                        }}
+                    />
+                </View>
             </View>
         </View>
     );

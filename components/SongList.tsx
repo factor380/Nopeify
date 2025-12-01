@@ -4,10 +4,10 @@ import SongItem from './SongItem';
 import { SongListProps } from '../types/types';
 
 
-export default function SongList({ songs }: SongListProps) {
+export default function SongList({ songs, onDelete }: SongListProps) {
   const renderItem = useCallback(({ item }: { item: { id: string; title: string; artist: string } }) => {
-    return <SongItem id={item.id} title={item.title} artist={item.artist} />;
-  }, []);
+    return <SongItem id={item.id} title={item.title} artist={item.artist} onDelete={onDelete} />;
+  }, [onDelete]);
 
   return (
     <FlatList

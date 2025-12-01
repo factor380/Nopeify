@@ -5,9 +5,10 @@ import SongList from './SongList';
 interface TrackListProps {
   tracks: any[];
   loading: boolean;
+  onDelete?: (id: string) => void;
 }
 
-export default function TrackList({ tracks, loading }: TrackListProps) {
+export default function TrackList({ tracks, loading, onDelete }: TrackListProps) {
   return (
     <View style={styles.section}>
       {loading ? (
@@ -19,6 +20,7 @@ export default function TrackList({ tracks, loading }: TrackListProps) {
             title: track.name,
             artist: track.artists?.[0]?.name || 'Unknown',
           }))}
+          onDelete={onDelete}
         />
       ) : (
         <Text style={styles.noData}>No tracks found</Text>

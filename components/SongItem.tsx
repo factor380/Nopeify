@@ -1,13 +1,34 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Button, Alert } from 'react-native';
 import { SongItemProps } from '../types/types';
 
 
-function SongItem({ title, artist }: SongItemProps) {
+function SongItem({ id, title, artist, onDelete }: SongItemProps) {
   return (
     <View style={styles.songItem}>
-      <Text style={styles.songTitle}>{title}</Text>
-      <Text style={styles.songArtist}>{artist}</Text>
+      <View style={styles.textWrap}>
+        <Text style={styles.songTitle}>{title}</Text>
+        <Text style={styles.songArtist}>{artist}</Text>
+      </View>
+      {onDelete && (
+        <View style={styles.buttonWrap}>
+          <Button
+            title="מחק"
+            color="#e22134"
+            onPress={() => {
+              Alert.alert(
+                'אישור מחיקה',
+                'האם אתה בטוח שברצונך למחוק שיר זה מהרשימה? פעולה זו אינה ניתנת לביטול.',
+                [
+                  { text: 'בטל', style: 'cancel' },
+                  { text: 'מחק', style: 'destructive', onPress: () => onDelete(id) },
+                ],
+                { cancelable: true }
+              );
+            }}
+          />
+        </View>
+      )}
     </View>
   );
 }
@@ -20,6 +41,9 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     backgroundColor: '#f3f3f3',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   songTitle: {
     fontSize: 18,
@@ -28,5 +52,12 @@ const styles = StyleSheet.create({
   songArtist: {
     fontSize: 14,
     color: '#666',
+  },
+  textWrap: {
+    flex: 1,
+    paddingRight: 8,
+  },
+  buttonWrap: {
+    width: 64,
   },
 });

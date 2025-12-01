@@ -37,7 +37,7 @@ class DislikedSongsService {
         return id in this.dislikedSongs;
     }
 
-    subscribe(cb: (songs: DislikedSong[]) => void) {
+    subscribe(cb: (songs: DislikedSong[]) => void): () => void {
         this.subscribers.add(cb);
         // immediately call with current list
         cb(this.getAll());

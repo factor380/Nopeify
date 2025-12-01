@@ -6,7 +6,6 @@ export default function UserInfo({ user, onLogout }: { user: SpotifyUser; onLogo
   return (
     <View style={styles.userSection}>
       <Text style={styles.header}>Welcome {user.display_name}!</Text>
-      {user.images && user.images[0] && <Text style={styles.subtext}>ID: {user.id}</Text>}
       <Button title="Logout" onPress={onLogout} color="#1DB954" />
     </View>
   );

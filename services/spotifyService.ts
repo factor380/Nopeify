@@ -1,3 +1,4 @@
+
 import axios, { AxiosInstance } from 'axios';
 
 const SPOTIFY_API_BASE_URL = 'https://api.spotify.com/v1';
@@ -240,6 +241,19 @@ class SpotifyService {
       await this.client.put('/me/player/pause', null, { params });
     } catch (error) {
       console.error('Error pausing playback:', error);
+      throw error;
+    }
+  }
+
+    /**
+   * Get the user's current playback state (currently playing track)
+   */
+  async getCurrentPlayback() {
+    try {
+      const response = await this.client.get('/me/player');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching current playback:', error);
       throw error;
     }
   }

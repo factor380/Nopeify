@@ -1,23 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator,  } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import SongList from './components/SongList';
 import SpotifyLogin from './components/SpotifyLogin';
 import { useSpotify } from './hooks/useSpotify';
-import spotifyService from './services/spotifyService';
 import UserInfo from './components/UserInfo';
-import TopTracks from './components/TopTracks';
+import TrackControls from './components/TrackControls';
+import CurrentTrack from './components/CurrentTrack';
+import DislikedSongs from './components/DislikedSongs';
 
 export default function App() {
   console.log('App component rendered');
-  const [songs, setSongs] = useState([
-    { id: '1', title: 'Imagine', artist: 'John Lennon' },
-    { id: '2', title: 'Bohemian Rhapsody', artist: 'Queen' },
-    { id: '3', title: 'Hotel California', artist: 'Eagles' },
-    { id: '4', title: 'Billie Jean', artist: 'Michael Jackson' },
-    { id: '5', title: 'Smells Like Teen Spirit', artist: 'Nirvana' },
-  ]);
+  
 
   const { isAuthenticated, user, loading, error, login, logout } = useSpotify();
 
@@ -38,8 +32,9 @@ export default function App() {
               {user && <UserInfo user={user} onLogout={logout} />}
 
               {error && <Text style={styles.error}>Error: {error.message}</Text>}
-
-              <TopTracks />
+              <TrackControls />
+              <CurrentTrack />
+              <DislikedSongs />
             </>
           )}
         </View>

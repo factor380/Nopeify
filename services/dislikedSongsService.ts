@@ -6,13 +6,7 @@ export interface DislikedSong {
 }
 
 class DislikedSongsService {
-    private dislikedSongs: Record<string, DislikedSong> = {
-        '1KEdF3FNF9bKRCxN3KUMbx': {
-            id: '1KEdF3FNF9bKRCxN3KUMbx',
-            title: 'Friday',
-            artist: 'Rebecca Black'
-        }
-    };
+    private dislikedSongs: Record<string, DislikedSong> = {};
     private subscribers: Set<(songs: DislikedSong[]) => void> = new Set();
 
     getAll(): DislikedSong[] {

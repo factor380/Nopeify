@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import dislikedSongsService from '../services/dislikedSongsService';
+import persistenceService from '../services/persistenceService';
 import TrackList from './TrackList';
 
 export default function DislikedSongs() {
@@ -9,18 +10,22 @@ export default function DislikedSongs() {
 
   useEffect(() => {
     setLoading(true);
-    const unsubscribe = dislikedSongsService.subscribe(dislikedSongs => {
-      setSongs(dislikedSongs.map(song => ({
-        id: song.id,
-        name: song.title,
-        artists: [{ name: song.artist }],
-      })));
-      setLoading(false);
-    });
+    // Load from AsyncStorage on mount
+    persistenceService.loadDislikedSongs().then(() => {
+      // Subscribe with auto-persistence
+      const unsubscribe = persistenceService.subscribeWithPersistence(dislikedSongs => {
+        setSongs(dislikedSongs.map(song => ({
+          id: song.id,
+          name: song.title,
+          artists: [{ name: song.artist }],
+        })));
+        setLoading(false);
+      });
 
-    return () => {
-      unsubscribe();
-    };
+      return () => {
+        unsubscribe();
+      };
+    });
   }, []);
 
   const handleDelete = (id: string) => {

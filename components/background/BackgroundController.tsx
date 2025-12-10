@@ -3,6 +3,7 @@ import BackgroundService from "react-native-background-actions";
 import { skipSongTask, skipTaskOptions } from "../background/skipBackgroundTask";
 import dislikedSongsService from "../../services/dislikedSongsService";
 import spotifyService from "../../services/spotifyService";
+import { Platform, Alert, Linking } from "react-native";
 
 
 
@@ -29,6 +30,40 @@ export const checkSpotify = async (token?: string) => {
   } catch (e) {
     console.warn("background-skip-task: error", e);
   }
+};
+
+// חשוב: בקש מהמשתמש לבטל אופטימיזציית סוללה לאפליקציה
+const handleBatteryOptimization = async () => {
+    if (Platform.OS === 'android') {
+        // בדוק אם האפליקציה נמצאת במצב אופטימיזציה (דורש מודול Native מותאם אישית בדרך כלל)
+        // אם אתה משתמש בספרייה כגון react-native-background-actions, ייתכן שיש לה פונקציה לבדיקה
+
+        Alert.alert(
+            "חשוב: הפעלת רקע",
+            "כדי ששירות הרקע של Nopeify יעבוד באופן רציף, עליך לבטל את אופטימיזציית הסוללה עבור האפליקציה.",
+            [
+                { text: "ביטול" },
+                {
+                    text: "הגדרות",
+                    onPress: () => {
+                        // הפניה ישירה למסך הגדרות הסוללה של האפליקציה
+                        const packageName = 'com.binyaminfactor380.helloworld'; // החלף בשם החבילה שלך!
+                        const intentUri = `package:${packageName}`;
+
+                        // מנסה לפתוח את מסך הגדרות האפליקציה
+                        Linking.openURL(`settings:ignore_battery_optimization?package=${intentUri}`)
+                            .catch(() => {
+                                // אם הקישור הקצר נכשל (בגרסאות אנדרואיד ישנות), פנה למסך הכללי יותר
+                                Linking.openURL('app-settings:')
+                                    .catch(() => {
+                                        Alert.alert("שגיאה", "אנא נווט ידנית להגדרות -> אפליקציות -> Nopeify -> סוללה.");
+                                    });
+                            });
+                    }
+                }
+            ]
+        );
+    }
 };
 
 

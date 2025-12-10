@@ -2,14 +2,14 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, ActivityIndicator, Image, StyleSheet, Button, Alert } from 'react-native';
 import spotifyService from '../services/spotifyService';
 import dislikedSongsService from '../services/dislikedSongsService';
-
+import BackgroundService from 'react-native-background-actions';
 export default function CurrentTrack() {
     const [track, setTrack] = useState<any>(null);
     const lastTrackIdRef = useRef<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Poll every 5 seconds, but only update if track id changed
+    // Poll every 5 seconds for UI display
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     useEffect(() => {
         let mounted = true;
@@ -18,12 +18,9 @@ export default function CurrentTrack() {
                 const response = await spotifyService.getCurrentPlayback();
                 const newTrack = response?.item || null;
                 const newId = newTrack?.id || null;
-                console.log('Polled current track:', newId, newTrack.name);
+
+                console.log('Polled current track:', newId, newTrack?.name);
                 if (mounted && newId !== lastTrackIdRef.current) {
-                    if (dislikedSongsService.isDisliked(newId)) {
-                        console.log('Current track is disliked, skipping to next track:', newId);
-                        spotifyService.nextTrack();
-                    }
                     setTrack(newTrack);
                     lastTrackIdRef.current = newId;
                 }

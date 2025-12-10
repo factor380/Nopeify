@@ -4,7 +4,8 @@ import * as AuthSession from 'expo-auth-session';
 import { spotifyConfig } from '../spotifyConfig';
 
 const REDIRECT_URI = AuthSession.makeRedirectUri({
-  scheme: "myapp" // מותר לשנות
+  scheme: "nopeify", // מותר לשנות
+  path: 'redirect'
 });
 
 export default function SpotifyLogin({ onLogin }: { onLogin: (token: string) => void }) {
@@ -30,6 +31,7 @@ export default function SpotifyLogin({ onLogin }: { onLogin: (token: string) => 
     // for an access token using the token endpoint and the original code_verifier.
     const exchangeCodeForToken = async (code: string) => {
       try {
+        console.log('Exchanging code for token:', code);
         const codeVerifier = (request as any)?.codeVerifier;
         const body = new URLSearchParams({
           grant_type: 'authorization_code',

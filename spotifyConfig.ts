@@ -3,7 +3,7 @@
 export const spotifyConfig = {
   clientId: '3837278983ad437abc2072c0617d5496',
   clientSecret: '0557dc203d564e168c9e86a77d5ddfbf',
-  redirectUrl: 'exp://localhost:19000://callback',
+  redirectUrl: 'nopeify://redirect',
   scopes: ["user-read-email",
     "user-read-private",
     "user-top-read",

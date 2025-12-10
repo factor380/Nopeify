@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator,  } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, Alert, Linking, Platform, } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import SpotifyLogin from './components/SpotifyLogin';
@@ -8,17 +8,28 @@ import UserInfo from './components/UserInfo';
 import TrackControls from './components/TrackControls';
 import CurrentTrack from './components/CurrentTrack';
 import DislikedSongs from './components/DislikedSongs';
+import BackgroundController, { checkSpotify } from './components/background/BackgroundController';
+import * as Notifications from 'expo-notifications';
+import { useNotificationPermissions } from './hooks/useNotificationPermissions';
 
 export default function App() {
   console.log('App component rendered');
-  
+
+  const {registerForPushNotificationsAsync} =useNotificationPermissions();
+  registerForPushNotificationsAsync();
 
   const { isAuthenticated, user, loading, error, login, logout } = useSpotify();
 
+  const [token, setToken] = useState<string | undefined>(undefined);
+
+  
+
   const handleLogin = async (token: string) => {
+    setToken(token);
     await login(token);
   };
 
+  //אולי לעשות חילוק ללוגיקת UI
   return (
     <SafeAreaView style={styles.container}>
       {!isAuthenticated ? (
@@ -29,6 +40,8 @@ export default function App() {
             <ActivityIndicator size="large" color="#1DB954" />
           ) : (
             <>
+              <BackgroundController token={token}/>
+
               {user && <UserInfo user={user} onLogout={logout} />}
 
               {error && <Text style={styles.error}>Error: {error.message}</Text>}

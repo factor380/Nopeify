@@ -45,6 +45,10 @@ class SpotifyService {
     });
   }
 
+  getAccessToken() {
+    return this.accessToken;
+  }
+
   /**
    * Set the access token for API requests
    */
@@ -200,7 +204,7 @@ class SpotifyService {
     }
   }
 
-  
+
 
   /**
    * Check if user follows artists or users
@@ -217,19 +221,6 @@ class SpotifyService {
     }
   }
 
-  /**
-   * Skip to next track on the user's active device
-   */
-  async nextTrack(deviceId?: string): Promise<void> {
-    try {
-      const params: any = {};
-      if (deviceId) params.device_id = deviceId;
-      await this.client.post('/me/player/next', null, { params });
-    } catch (error) {
-      console.error('Error skipping to next track:', error);
-      throw error;
-    }
-  }
 
   /**
    * Pause playback on the user's active device
@@ -245,18 +236,43 @@ class SpotifyService {
     }
   }
 
-    /**
-   * Get the user's current playback state (currently playing track)
-   */
-  async getCurrentPlayback() {
+
+
+  async getCurrentPlayback(token?: string) {
+    const client = token
+      ? axios.create({
+        baseURL: SPOTIFY_API_BASE_URL,
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      : this.client;
+
     try {
-      const response = await this.client.get('/me/player');
+      const response = await client.get('/me/player');
       return response.data;
     } catch (error) {
       console.error('Error fetching current playback:', error);
       throw error;
     }
   }
+
+  async nextTrack(token?: string, deviceId?: string) {
+    const client = token
+      ? axios.create({
+        baseURL: SPOTIFY_API_BASE_URL,
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      : this.client;
+
+    try {
+      const params: any = {};
+      if (deviceId) params.device_id = deviceId;
+      await client.post('/me/player/next', null, { params });
+    } catch (error) {
+      console.error('Error skipping to next track:', error);
+      throw error;
+    }
+  }
+
 }
 
 // Export singleton instance

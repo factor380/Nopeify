@@ -14,9 +14,9 @@ export default function SongList({ songs, onDelete }: SongListProps) {
       data={songs}
       keyExtractor={(item) => item.id}
       renderItem={renderItem}
-      initialNumToRender={8}
-      maxToRenderPerBatch={10}
-      windowSize={5}
+      initialNumToRender={4}
+      maxToRenderPerBatch={5}
+      windowSize={21}
       removeClippedSubviews={true}
     />
   );

@@ -13,8 +13,8 @@ export default function UserInfo({ user, onLogout }: { user: SpotifyUser; onLogo
 
 const styles = StyleSheet.create({
   userSection: {
-    marginBottom: 24,
-    paddingBottom: 16,
+    marginBottom: 0,
+    paddingBottom: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#282828',
   },

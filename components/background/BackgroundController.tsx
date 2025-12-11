@@ -26,6 +26,10 @@ export const checkSpotify = async (token?: string) => {
       });
     } else {
       console.log("background-skip-task: track is fine");
+      await BackgroundService.updateNotification({
+        taskTitle: "Nopeify",
+        taskDesc: `now play: ${track?.name}`,
+      });
     }
   } catch (e) {
     console.warn("background-skip-task: error", e);

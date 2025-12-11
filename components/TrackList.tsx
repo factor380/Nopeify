@@ -31,6 +31,7 @@ export default function TrackList({ tracks, loading, onDelete }: TrackListProps)
 
 const styles = StyleSheet.create({
   section: {
+    height: '55%',
     marginBottom: 24,
   },
 

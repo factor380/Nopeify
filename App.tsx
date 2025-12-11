@@ -5,7 +5,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import SpotifyLogin from './components/SpotifyLogin';
 import { useSpotify } from './hooks/useSpotify';
 import UserInfo from './components/UserInfo';
-import TrackControls from './components/TrackControls';
 import CurrentTrack from './components/CurrentTrack';
 import DislikedSongs from './components/DislikedSongs';
 import BackgroundController, { checkSpotify } from './components/background/BackgroundController';
@@ -43,9 +42,7 @@ export default function App() {
               <BackgroundController token={token}/>
 
               {user && <UserInfo user={user} onLogout={logout} />}
-
               {error && <Text style={styles.error}>Error: {error.message}</Text>}
-              <TrackControls />
               <CurrentTrack />
               <DislikedSongs />
             </>

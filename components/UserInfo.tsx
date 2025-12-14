@@ -1,12 +1,13 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { SpotifyUser } from '../services/spotifyService';
+import AppButton from './Generic Components/AppButton';
 
 export default function UserInfo({ user, onLogout }: { user: SpotifyUser; onLogout: () => void }) {
   return (
     <View style={styles.userSection}>
       <Text style={styles.header}>Welcome {user.display_name}!</Text>
-      <Button title="Logout" onPress={onLogout} color="#1DB954" />
+      <AppButton title="Logout" onPress={onLogout} color="#1DB954" />
     </View>
   );
 }

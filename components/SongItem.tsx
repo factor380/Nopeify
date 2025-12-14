@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Button, Alert } from 'react-native';
 import { SongItemProps } from '../types/types';
+import AppButton from './Generic Components/AppButton';
 
 
 function SongItem({ id, title, artist, onDelete }: SongItemProps) {
@@ -11,19 +12,19 @@ function SongItem({ id, title, artist, onDelete }: SongItemProps) {
         <Text style={styles.songArtist}>{artist}</Text>
       </View>
       {onDelete && (
-        <View style={styles.buttonWrap}>
-          <Button
-            title="מחק"
+        <View style={[styles.buttonWrap, { minWidth: 56, marginLeft: 8 }]}>
+          <AppButton
+            title="Delete"
             color="#e22134"
             onPress={() => {
               Alert.alert(
-                'אישור מחיקה',
-                'האם אתה בטוח שברצונך למחוק שיר זה מהרשימה? פעולה זו אינה ניתנת לביטול.',
-                [
-                  { text: 'בטל', style: 'cancel' },
-                  { text: 'מחק', style: 'destructive', onPress: () => onDelete(id) },
-                ],
-                { cancelable: true }
+          'Delete confirmation',
+          'Are you sure you want to delete this song from the list? This action cannot be undone.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Delete', style: 'destructive', onPress: () => onDelete(id) },
+          ],
+          { cancelable: true }
               );
             }}
           />
@@ -58,6 +59,8 @@ const styles = StyleSheet.create({
     paddingRight: 8,
   },
   buttonWrap: {
-    width: 64,
+    textTransform: 'none',
+    fontSize: 10,
+    width: 70,
   },
 });

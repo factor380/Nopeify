@@ -55,7 +55,7 @@ export default function DislikedSongs() {
       <Text style={styles.sectionTitle}>Disliked Songs</Text>
       <TextInput
         style={styles.input}
-        placeholder="הקלד שם שיר או אמן..."
+        placeholder="Type track or artist name..."
         placeholderTextColor="#999"
         value={searchQuery}
         onChangeText={setSearchQuery} // מעדכן את הסטייט של השאילתה
@@ -91,6 +91,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: '#fff',
     fontSize: 16,
-    textAlign: 'right', // תמיכה בעברית
+    textAlign: 'left', // align for English
   },
 });

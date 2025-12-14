@@ -3,6 +3,7 @@ import { View, Text, ActivityIndicator, Image, StyleSheet, Button, Alert } from 
 import spotifyService from '../services/spotifyService';
 import dislikedSongsService from '../services/dislikedSongsService';
 import BackgroundService from 'react-native-background-actions';
+import AppButton from './Generic Components/AppButton';
 export default function CurrentTrack() {
     const [track, setTrack] = useState<any>(null);
     const lastTrackIdRef = useRef<string | null>(null);
@@ -44,7 +45,7 @@ export default function CurrentTrack() {
             const response = await spotifyService.getCurrentPlayback();
             setTrack(response?.item || null);
         } catch (err: any) {
-            setError('לא ניתן לטעון שיר נוכחי');
+            setError('Unable to load current track');
             setTrack(null);
         } finally {
             setLoading(false);
@@ -53,7 +54,7 @@ export default function CurrentTrack() {
 
     if (loading) return <ActivityIndicator size="small" color="#1DB954" />;
     if (error) return <Text style={styles.error}>{error}</Text>;
-    if (!track) return <Text style={styles.noData}>לא מתנגן שיר כרגע</Text>;
+    if (!track) return <Text style={styles.noData}>No track currently playing</Text>;
 
     return (
         <View style={styles.container}>
@@ -64,14 +65,14 @@ export default function CurrentTrack() {
                 <Text style={styles.title}>{track.name}</Text>
                 <Text style={styles.artist}>{track.artists?.map((a: any) => a.name).join(', ')}</Text>
                 <View style={{ marginTop: 8 }}>
-                    <Button
-                        title="הוסף ל'לא אהבתי'"
+                    <AppButton
+                        title="Add to Disliked"
                         color="#e22134"
                         onPress={() => {
                             const id = track?.id;
                             if (!id) return;
                             if (dislikedSongsService.isDisliked(id)) {
-                                Alert.alert('שגיאה', 'השיר כבר ברשימת ה"לא אהבתי"');
+                                Alert.alert('Error', 'Track is already in the Disliked list');
                                 return;
                             }
                             try {
@@ -81,10 +82,10 @@ export default function CurrentTrack() {
                                     artist: track.artists?.[0]?.name || 'Unknown',
                                 });
                                 spotifyService.nextTrack();
-                                Alert.alert('בוצע', 'השיר הוסף לרשימת ה"לא אהבתי" - עוברים לשיר הבא');
+                                Alert.alert('Done', 'Track added to Disliked — skipping to next track');
                             } catch (e) {
                                 console.error('Error adding to disliked:', e);
-                                Alert.alert('שגיאה', 'לא ניתן להוסיף את השיר כעת');
+                                Alert.alert('Error', 'Unable to add the track at the moment');
                             }
                         }}
                     />
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
     title: {
         color: '#fff',
         fontWeight: 'bold',
-        fontSize: 16,
+        fontSize: 14,
     },
     artist: {
         color: '#b3b3b3',

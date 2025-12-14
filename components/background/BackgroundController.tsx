@@ -15,20 +15,20 @@ export const checkSpotify = async (token?: string) => {
     const track = response?.item;
     const id = track?.id;
 
-    if (id && dislikedSongsService.isDisliked(id)) {
+      if (id && dislikedSongsService.isDisliked(id)) {
       console.log("background-skip-task: skipping disliked track", id);
 
       await spotifyService.nextTrack(token);
 
       await BackgroundService.updateNotification({
         taskTitle: "Nopeify",
-        taskDesc: "דילגתי על שיר שלא אהבת 🎵",
+        taskDesc: "Skipped a disliked track 🎵",
       });
     } else {
       console.log("background-skip-task: track is fine");
       await BackgroundService.updateNotification({
         taskTitle: "Nopeify",
-        taskDesc: `now play: ${track?.name}`,
+        taskDesc: `Now playing: ${track?.name}`,
       });
     }
   } catch (e) {
@@ -43,26 +43,26 @@ const handleBatteryOptimization = async () => {
         // אם אתה משתמש בספרייה כגון react-native-background-actions, ייתכן שיש לה פונקציה לבדיקה
 
         Alert.alert(
-            "חשוב: הפעלת רקע",
-            "כדי ששירות הרקע של Nopeify יעבוד באופן רציף, עליך לבטל את אופטימיזציית הסוללה עבור האפליקציה.",
+            "Important: Background enabled",
+            "To keep the Nopeify background service running reliably, please disable battery optimization for the app.",
             [
-                { text: "ביטול" },
-                {
-                    text: "הגדרות",
-                    onPress: () => {
+              { text: "Cancel" },
+              {
+                text: "Settings",
+                onPress: () => {
                         // הפניה ישירה למסך הגדרות הסוללה של האפליקציה
-                        const packageName = 'com.binyaminfactor380.helloworld'; // החלף בשם החבילה שלך!
+                        const packageName = 'com.binyaminfactor380.Nopeify'; // החלף בשם החבילה שלך!
                         const intentUri = `package:${packageName}`;
 
                         // מנסה לפתוח את מסך הגדרות האפליקציה
                         Linking.openURL(`settings:ignore_battery_optimization?package=${intentUri}`)
                             .catch(() => {
-                                // אם הקישור הקצר נכשל (בגרסאות אנדרואיד ישנות), פנה למסך הכללי יותר
-                                Linking.openURL('app-settings:')
-                                    .catch(() => {
-                                        Alert.alert("שגיאה", "אנא נווט ידנית להגדרות -> אפליקציות -> Nopeify -> סוללה.");
-                                    });
-                            });
+                            // If the short link fails (older Android versions), open the general settings screen
+                            Linking.openURL('app-settings:')
+                              .catch(() => {
+                                Alert.alert("Error", "Please navigate to Settings -> Apps -> Nopeify -> Battery.");
+                              });
+                          });
                     }
                 }
             ]

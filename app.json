@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "hello-world",
+    "name": "Nopeify",
     "slug": "hello-world",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/NopeifyIcon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "scheme": "nopeify",
@@ -14,7 +14,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.binyaminfactor380.Nopeify",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -22,7 +26,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.binyaminfactor380.helloworld"
+      "package": "com.binyaminfactor380.Nopeify"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -34,7 +38,13 @@
     },
     "plugins": [
       "expo-notifications",
-      "./withBackgroundActions.js" 
-    ]
+      "./withBackgroundActions.js"
+    ],
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b8b52f08-deb6-44e1-ad53-e87a0e1e4e7a"
+    }
   }
 }

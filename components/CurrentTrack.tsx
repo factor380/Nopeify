@@ -21,7 +21,7 @@ export default function CurrentTrack() {
                 const newId = newTrack?.id || null;
 
                 console.log('Polled current track:', newId, newTrack?.name);
-                if (mounted && newId !== lastTrackIdRef.current) {
+                if (mounted && newId !== lastTrackIdRef?.current) {
                     setTrack(newTrack);
                     lastTrackIdRef.current = newId;
                 }
@@ -38,19 +38,7 @@ export default function CurrentTrack() {
         };
     }, []);
 
-    const fetchCurrentTrack = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await spotifyService.getCurrentPlayback();
-            setTrack(response?.item || null);
-        } catch (err: any) {
-            setError('Unable to load current track');
-            setTrack(null);
-        } finally {
-            setLoading(false);
-        }
-    };
+
 
     if (loading) return <ActivityIndicator size="small" color="#1DB954" />;
     if (error) return <Text style={styles.error}>{error}</Text>;

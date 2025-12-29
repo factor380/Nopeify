@@ -25,6 +25,14 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "permissions": [
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_DATA_SYNC",
+        "WAKE_LOCK"
+      ],
+      "config": {
+        "foregroundServiceType": "dataSync"
+      },
       "edgeToEdgeEnabled": true,
       "package": "com.binyaminfactor380.Nopeify"
     },

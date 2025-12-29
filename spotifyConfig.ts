@@ -14,4 +14,7 @@ export const spotifyConfig = {
     authorizationEndpoint: 'https://accounts.spotify.com/authorize',
     tokenEndpoint: 'https://accounts.spotify.com/api/token',
   },
+  extraParams: {
+    show_dialog: 'true',
+  },
 };

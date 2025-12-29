@@ -12,6 +12,7 @@ export const skipTaskOptions = {
   },
   color: "#0db36a",
   linkingURI: 'nopeify://home',
+  fullScreenIntent: true,
   parameters: {
     delay: 5000,
     token: '',

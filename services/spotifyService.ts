@@ -1,7 +1,16 @@
 
 import axios, { AxiosInstance } from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { spotifyConfig } from '../spotifyConfig';
 
 const SPOTIFY_API_BASE_URL = 'https://api.spotify.com/v1';
+
+// Callback for when access token is refreshed
+let onAccessTokenRefreshed: ((newToken: string) => Promise<void>) | null = null;
+
+export const setAccessTokenRefreshCallback = (callback: ((newToken: string) => Promise<void>) | null) => {
+  onAccessTokenRefreshed = callback;
+};
 
 export interface SpotifyTrack {
   id: string;
@@ -236,6 +245,53 @@ class SpotifyService {
     }
   }
 
+  async refreshAccessToken(): Promise<string> {
+    try {
+      const tokenUrl = spotifyConfig.serviceConfiguration.tokenEndpoint;
+
+      const refreshToken = await AsyncStorage.getItem('spotify_refresh_token');
+      if (!refreshToken) {
+        throw new Error('No refresh token available in storage');
+      }
+
+      const params = new URLSearchParams();
+      params.append('grant_type', 'refresh_token');
+      params.append('refresh_token', refreshToken);
+
+      // If clientId exists in config, include it (PKCE flow does not require client secret)
+      if (spotifyConfig.clientId) {
+        params.append('client_id', spotifyConfig.clientId);
+      }
+
+      const response = await axios.post(tokenUrl, params.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+
+      const data = response.data;
+
+      if (data.access_token) {
+        this.setAccessToken(data.access_token);
+        // If Spotify rotated the refresh token, save the new one
+        console.log('Refreshing access token, new refresh token:', data.refresh_token);
+        if (data.refresh_token) {
+          await AsyncStorage.setItem('spotify_refresh_token', data.refresh_token);
+        }
+        // Invoke callback to notify listeners about token refresh
+        if (onAccessTokenRefreshed) {
+          await onAccessTokenRefreshed(data.access_token);
+        }
+        return data.access_token;
+      }
+
+      throw new Error('Failed to refresh access token');
+    } catch (error) {
+      console.error('Error refreshing access token:', error);
+      throw error;
+    }
+  }
+
 
 
   async getCurrentPlayback(token?: string) {
@@ -249,7 +305,10 @@ class SpotifyService {
     try {
       const response = await client.get('/me/player');
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
+      if (error.response && error.response.status === 401) {
+        this.refreshAccessToken()
+      }
       console.error('Error fetching current playback:', error);
       throw error;
     }

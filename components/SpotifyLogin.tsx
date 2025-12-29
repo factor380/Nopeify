@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, View, Text } from 'react-native';
 import * as AuthSession from 'expo-auth-session';
 import { spotifyConfig } from '../spotifyConfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const REDIRECT_URI = AuthSession.makeRedirectUri({
   scheme: "nopeify", // מותר לשנות
@@ -16,6 +17,7 @@ export default function SpotifyLogin({ onLogin }: { onLogin: (token: string) => 
       redirectUri: REDIRECT_URI,
       responseType: "code",
       usePKCE: true,
+      extraParams: spotifyConfig.extraParams,
     },
     {
       authorizationEndpoint: spotifyConfig.serviceConfiguration.authorizationEndpoint,
@@ -54,9 +56,14 @@ export default function SpotifyLogin({ onLogin }: { onLogin: (token: string) => 
 
         if (tokenData.access_token) {
           onLogin(tokenData.access_token);
+          if (tokenData.refresh_token) {
+          console.log('Spotify refresh token:', tokenData.refresh_token);
+            await AsyncStorage.setItem('spotify_refresh_token', tokenData.refresh_token);
+          }
         } else {
           console.error('No access token returned from Spotify', tokenData);
         }
+
       } catch (err) {
         console.error('Error exchanging code for token:', err);
       }
@@ -74,12 +81,12 @@ export default function SpotifyLogin({ onLogin }: { onLogin: (token: string) => 
     }
   }, [response]);
 
-  
+
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Button 
-        title="Login with Spotify" 
+      <Button
+        title="Login with Spotify"
         onPress={() => promptAsync()}
         disabled={!request}
       />

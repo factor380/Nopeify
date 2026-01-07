@@ -1,9 +1,9 @@
 
 
 export const spotifyConfig = {
-  clientId: '3837278983ad437abc2072c0617d5496',
-  clientSecret: '0557dc203d564e168c9e86a77d5ddfbf',
-  redirectUrl: 'nopeify://redirect',
+  clientId: process.env.EXPO_PUBLIC_SPOTIFY_CLIENT_ID.toString(),
+  clientSecret: process.env.EXPO_PUBLIC_SPOTIFY_CLIENT_SECRET.toString(),
+  redirectUrl: process.env.EXPO_PUBLIC_SPOTIFY_REDIRECT_URI.toString(),
   scopes: ["user-read-email",
     "user-read-private",
     "user-top-read",

@@ -4,7 +4,7 @@ import { skipSongTask, skipTaskOptions } from "../background/skipBackgroundTask"
 import dislikedSongsService from "../../services/dislikedSongsService";
 import spotifyService, { setAccessTokenRefreshCallback } from "../../services/spotifyService";
 import { Platform, Alert, Linking } from "react-native";
-// import * as Battery from 'expo-battery';
+import * as Battery from 'expo-battery';
 
 
 let changeNotification = true;
@@ -61,8 +61,7 @@ export const checkSpotify = async (token?: string) => {
 const handleBatteryOptimization = async () => {
   if (Platform.OS === 'android') {
 
-    // const isEnabled = await Battery.isBatteryOptimizationEnabledAsync();change when i can do build
-    const isEnabled = true; // temporary fix
+    const isEnabled = await Battery.isBatteryOptimizationEnabledAsync();
     if (!isEnabled) {
       console.log("Battery optimization is already disabled for this app.");
       return;

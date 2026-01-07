@@ -46,7 +46,8 @@
     },
     "plugins": [
       "expo-notifications",
-      "./withBackgroundActions.js"
+      "./withBackgroundActions.js",
+      "expo-secure-store"
     ],
     "runtimeVersion": {
       "policy": "appVersion"

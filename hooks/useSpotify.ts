@@ -1,6 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
 import spotifyService from '../services/spotifyService';
 import { SpotifyUser } from '../services/spotifyService';
+import { deleteSpotifyAccessToken, deleteSpotifyRefreshToken } from '../services/secureStoreTokens';
+
 
 export interface UseSpotifyReturn {
   isAuthenticated: boolean;
@@ -8,7 +10,7 @@ export interface UseSpotifyReturn {
   loading: boolean;
   error: Error | null;
   login: (token: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
 
@@ -42,11 +44,20 @@ export const useSpotify = (): UseSpotifyReturn => {
   /**
    * Logout from Spotify
    */
-  const logout = useCallback(() => {
-    spotifyService.clearAccessToken();
-    setUser(null);
-    setIsAuthenticated(false);
-    setError(null);
+  const logout = useCallback(async () => {
+    try {
+      spotifyService.clearAccessToken();
+      await Promise.all([
+      deleteSpotifyAccessToken(),
+      deleteSpotifyRefreshToken()
+    ]);
+    } catch (err) {
+      console.warn('Error clearing stored tokens on logout:', err);
+    } finally {
+      setUser(null);
+      setIsAuthenticated(false);
+      setError(null);
+    }
   }, []);
 
   /**

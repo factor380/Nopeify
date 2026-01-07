@@ -4,7 +4,7 @@
     "slug": "hello-world",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/NopeifyIcon.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "scheme": "nopeify",

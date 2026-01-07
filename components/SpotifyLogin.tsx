@@ -28,7 +28,6 @@ export default function SpotifyLogin({ onLogin }: { onLogin: (token: string) => 
   useEffect(() => {
     // Debug: show the full response in the console to diagnose auth issues
     console.log('Spotify auth response:', response);
-    console.log(spotifyConfig.clientId);
 
     // With PKCE we receive an authorization `code` which must be exchanged
     // for an access token using the token endpoint and the original code_verifier.

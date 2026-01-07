@@ -1,6 +1,6 @@
 
 import axios, { AxiosInstance } from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getSpotifyRefreshToken, setSpotifyRefreshToken,  setSpotifyAccessToken } from './secureStoreTokens';
 import { spotifyConfig } from '../spotifyConfig';
 
 const SPOTIFY_API_BASE_URL = 'https://api.spotify.com/v1';
@@ -249,7 +249,7 @@ class SpotifyService {
     try {
       const tokenUrl = spotifyConfig.serviceConfiguration.tokenEndpoint;
 
-      const refreshToken = await AsyncStorage.getItem('spotify_refresh_token');
+      const refreshToken = await getSpotifyRefreshToken();
       if (!refreshToken) {
         throw new Error('No refresh token available in storage');
       }
@@ -276,7 +276,13 @@ class SpotifyService {
         // If Spotify rotated the refresh token, save the new one
         console.log('Refreshing access token, new refresh token:', data.refresh_token);
         if (data.refresh_token) {
-          await AsyncStorage.setItem('spotify_refresh_token', data.refresh_token);
+          await setSpotifyRefreshToken(data.refresh_token);
+        }
+        // Persist the new access token as well
+        try {
+          await setSpotifyAccessToken(data.access_token);
+        } catch (err) {
+          console.warn('Failed to persist refreshed access token:', err);
         }
         // Invoke callback to notify listeners about token refresh
         if (onAccessTokenRefreshed) {
@@ -307,7 +313,8 @@ class SpotifyService {
       return response.data;
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
-        this.refreshAccessToken()
+         await this.refreshAccessToken();
+         return null;
       }
       console.error('Error fetching current playback:', error);
       throw error;

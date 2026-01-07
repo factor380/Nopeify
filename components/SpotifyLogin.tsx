@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Button, View, Text } from 'react-native';
 import * as AuthSession from 'expo-auth-session';
 import { spotifyConfig } from '../spotifyConfig';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { setSpotifyRefreshToken } from '../services/secureStoreTokens';
+import { setSpotifyAccessToken } from '../services/secureStoreTokens';
 const REDIRECT_URI = AuthSession.makeRedirectUri({
   scheme: "nopeify", // מותר לשנות
   path: 'redirect'
@@ -56,9 +56,11 @@ export default function SpotifyLogin({ onLogin }: { onLogin: (token: string) => 
 
         if (tokenData.access_token) {
           onLogin(tokenData.access_token);
+          // Persist both access and refresh tokens centrally
+          await setSpotifyAccessToken(tokenData.access_token);
           if (tokenData.refresh_token) {
-          console.log('Spotify refresh token:', tokenData.refresh_token);
-            await AsyncStorage.setItem('spotify_refresh_token', tokenData.refresh_token);
+            console.log('Spotify refresh token:', tokenData.refresh_token);
+            await setSpotifyRefreshToken(tokenData.refresh_token);
           }
         } else {
           console.error('No access token returned from Spotify', tokenData);

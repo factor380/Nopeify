@@ -14,6 +14,7 @@ import { useNotificationPermissions } from './hooks/useNotificationPermissions';
 export default function App() {
   console.log('App component rendered');
 
+
   const {registerForPushNotificationsAsync} =useNotificationPermissions();
   registerForPushNotificationsAsync();
 

@@ -42,3 +42,4 @@ yarn-error.*
 
 # logs
 debug.log
+.env

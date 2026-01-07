@@ -1,22 +1,18 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import dislikedSongsService, { DislikedSong } from './dislikedSongsService';
+import { getDislikedSongs, setDislikedSongs, deleteDislikedSongs } from './secureStoreTokens';
 
-const DISLIKED_SONGS_KEY = '@disliked_songs_storage';
+const DISLIKED_SONGS_KEY = 'disliked_songs_storage';
 
 class PersistenceService {
   /**
-   * Load disliked songs from AsyncStorage and populate the service
+   * Load disliked songs from SecureStore and populate the service
    */
   async loadDislikedSongs(): Promise<DislikedSong[]> {
     try {
-      const jsonString = await AsyncStorage.getItem(DISLIKED_SONGS_KEY);
-      if (jsonString) {
-        const songs = JSON.parse(jsonString) as DislikedSong[];
+      const songs = await getDislikedSongs();
+      if (songs && songs.length) {
         console.log('Loaded disliked songs from storage:', songs.length);
-        // Populate the service with loaded songs
-        songs.forEach(song => {
-          dislikedSongsService.add(song);
-        });
+        songs.forEach(song => dislikedSongsService.add(song));
         return songs;
       }
     } catch (error) {
@@ -26,13 +22,13 @@ class PersistenceService {
   }
 
   /**
-   * Save disliked songs to AsyncStorage
+   * Save disliked songs to SecureStore
    */
   async saveDislikedSongs(): Promise<void> {
     try {
       const songs = dislikedSongsService.getAll();
       const jsonString = JSON.stringify(songs);
-      await AsyncStorage.setItem(DISLIKED_SONGS_KEY, jsonString);
+      await setDislikedSongs(songs);
       console.log('Saved disliked songs to storage:', songs.length);
     } catch (error) {
       console.error('Error saving disliked songs to storage:', error);
@@ -40,11 +36,11 @@ class PersistenceService {
   }
 
   /**
-   * Clear all disliked songs from AsyncStorage
+   * Clear all disliked songs from SecureStore
    */
   async clearDislikedSongs(): Promise<void> {
     try {
-      await AsyncStorage.removeItem(DISLIKED_SONGS_KEY);
+      await deleteDislikedSongs();
       console.log('Cleared disliked songs from storage');
     } catch (error) {
       console.error('Error clearing disliked songs from storage:', error);
@@ -52,7 +48,7 @@ class PersistenceService {
   }
 
   /**
-   * Subscribe to changes and auto-save to AsyncStorage
+   * Subscribe to changes and auto-save to SecureStore
    * Returns unsubscribe function
    */
   subscribeWithPersistence(cb?: (songs: DislikedSong[]) => void) {

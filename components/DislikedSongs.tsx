@@ -27,7 +27,7 @@ export default function DislikedSongs() {
 
   useEffect(() => {
     setLoading(true);
-    // Load from AsyncStorage on mount
+    // Load from SecureStore on mount
     persistenceService.loadDislikedSongs().then(() => {
       // Subscribe with auto-persistence
       const unsubscribe = persistenceService.subscribeWithPersistence(dislikedSongs => {
